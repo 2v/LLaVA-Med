@@ -1,15 +1,5 @@
 import json
 
-link_root = "https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/"
-
-with open("llava_med_eval_qa50_fig_captions.json") as f:
-    entries = json.load(f)
-
-
-entries_list = []
-for key in entries:
-    entries_list.extend(entries[key])
-
 
 def get_formatted_url(path):
     parts = path.split('/')
@@ -27,6 +17,22 @@ def get_image_path(path):
     return new_path
 
 
+def write_to_json_lines(objects, file_name):
+    with open(file_name, 'w') as file:
+        for obj in objects:
+            json_line = json.dumps(obj)
+            file.write(json_line + '\n')
+
+
+link_root = "https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_package/"
+
+with open("llava_med_eval_qa50_fig_captions.json") as f:
+    entries = json.load(f)
+
+entries_list = []
+for key in entries:
+    entries_list.extend(entries[key])
+
 output = []
 for entry in entries_list:
     line = {}
@@ -35,12 +41,6 @@ for entry in entries_list:
     line['pair_id'] = entry['pair_id']
 
     output.append(line)
-
-def write_to_json_lines(objects, file_name):
-    with open(file_name, 'w') as file:
-        for obj in objects:
-            json_line = json.dumps(obj)
-            file.write(json_line + '\n')
 
 file_name = '../llava_med_image_urls_eval.jsonl'
 
