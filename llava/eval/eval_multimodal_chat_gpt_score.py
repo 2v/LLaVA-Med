@@ -1,12 +1,22 @@
+import os
 import sys
 import json
 import argparse
 from pprint import pprint
 from copy import deepcopy
 from collections import defaultdict
+from dotenv import load_dotenv
+
 
 sys.path.append("llava")
-from openai_api import call_async
+from openai_api import call_async   # we can ignore this since we append the path above
+
+load_dotenv()
+
+#from openai_api import call_async
+
+# from openai import AsyncOpenAI
+# client = AsyncOpenAI()
 
 
 class LLMEvalPromptGenerator:
@@ -72,6 +82,18 @@ class ChatEvaluation:
     pprint(result)
 
 
+# client = AsyncOpenAI(
+#     # This is the default and can be omitted
+#     api_key=os.environ.get("OPENAI_API_KEY"),
+# )
+#
+#
+# async def create_chat_completion(messages):
+#     chat_completion_resp = await client.chat.completions.create(model="gpt-4-1106-preview", messages=messages)
+#     return chat_completion_resp
+#
+#
+
 def main(args):
   # Load input data
   answer_data = []
@@ -106,14 +128,35 @@ def main(args):
     for sample in samples:
       if sample['question_id'] in result_question_ids:
         continue
+
       batch.append(sample)
-      if len(batch)>=BATCH_SIZE:
+
+      if len(batch) >= BATCH_SIZE:
         async_results = call_async(batch, lambda x: LLMEvalPromptGenerator.compare_messages_gen(x))
         results.extend(async_results)
         print(f"Result Size: {len(results)}")
         batch = []
+
     async_results = call_async(batch, lambda x: LLMEvalPromptGenerator.compare_messages_gen(x))
     results.extend(async_results)
+    print(f"Result Size: {len(results)}")
+
+    #
+    #   if len(batch)>=BATCH_SIZE:
+    #
+    #     messages_batch = list(map(lambda x: LLMEvalPromptGenerator.compare_messages_gen(x), batch))
+    #
+    #     async_results = await asyncio.gather(*(create_chat_completion(m) for m in messages_batch))
+    #     results.extend(async_results)
+    #     print(f"Result Size: {len(results)}")
+    #     batch = []
+    #
+    # async_results = await asyncio.gather(*(create_chat_completion(m) for m in messages_batch))
+    # results.extend(async_results)
+
+    #async_results = call_async(batch, lambda x: LLMEvalPromptGenerator.compare_messages_gen(x))
+    #results.extend(async_results)
+
     print(f"Result Size: {len(results)}")
     
   # Print number of questions and results
@@ -133,7 +176,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--question_input_path', type=str, default='data/eval/llava_med_eval_qa50_qa.jsonl')
-    parser.add_argument('--input_path', type=str, default='dbfs:/mnt/hanoverdev/scratch/clwon/llava/test/answers/test50/2023-05-10_med-pretrain-364m-v1-1epoch.jsonl')
+    parser.add_argument('--input_path', type=str, default='data/eval/answer_file_test.jsonl')
     parser.add_argument('--output_path', type=str, default='data/eval/llava_med_eval_qa50_qa_ans.jsonl')
     args = parser.parse_args()
     main(args)

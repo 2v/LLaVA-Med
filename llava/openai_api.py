@@ -1,30 +1,31 @@
-import openai
+import os
 import time
 import asyncio
+from openai import AsyncOpenAI
+from dotenv import load_dotenv
 
-# Fill in your OpenAI setup params here
-openai.api_type = "azure"
-openai.api_key = '...'
-openai.api_base = 'https://example-endpoint.openai.azure.com/'
-openai.api_version = "2023-03-15-preview"
 
-DEPLOYMENT_ID="deployment-name"
+load_dotenv()
 
+client = AsyncOpenAI(
+    # This is the default and can be omitted
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+
+
+async def create_chat_completion(messages, temperature, model="gpt-4-1106-preview"):
+    chat_completion_resp = await client.chat.completions.create(
+        messages=messages,
+        temperature=temperature,
+        model=model
+    )
+    return chat_completion_resp
 
 async def dispatch_openai_requests(
-  deployment_id,
   messages_list,
   temperature,
 ):
-    async_responses = [
-        openai.ChatCompletion.acreate(
-            deployment_id=deployment_id,
-            messages=x,
-            temperature=temperature,
-        )
-        for x in messages_list
-    ]
-    return await asyncio.gather(*async_responses)
+    return await asyncio.gather(*(create_chat_completion(m, temperature) for m in messages_list))
 
 
 def call_async(samples, wrap_gen_message, print_result=False):
@@ -36,7 +37,6 @@ def call_async(samples, wrap_gen_message, print_result=False):
   try:
     predictions = asyncio.run(
       dispatch_openai_requests(
-        deployment_id=DEPLOYMENT_ID,
         messages_list=message_list,
         temperature=0.0,
       )
@@ -49,9 +49,8 @@ def call_async(samples, wrap_gen_message, print_result=False):
   results = []
   for sample, prediction in zip(samples, predictions):
     if prediction:
-      if 'content' in prediction['choices'][0]['message']:
-        sample['result'] = prediction['choices'][0]['message']['content']
-        if print_result:
-          print(sample['result'])
-        results.append(sample)
+      sample['result'] = prediction.choices[0].message.content
+      if print_result:
+        print(sample['result'])
+      results.append(sample)
   return results

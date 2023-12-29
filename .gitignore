@@ -1,3 +1,5 @@
 data/llava_med_image_urls.jsonl
 data/images/*
 data/pmc_articles/*
+data/VQA_RAD/*
+.env
