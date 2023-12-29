@@ -13,12 +13,6 @@ from openai_api import call_async   # we can ignore this since we append the pat
 
 load_dotenv()
 
-#from openai_api import call_async
-
-# from openai import AsyncOpenAI
-# client = AsyncOpenAI()
-
-
 class LLMEvalPromptGenerator:
    
   instruct_prompt = """We would like to request your feedback on the performance of two AI assistants in response to the user question displayed above. The user asks the question on observing an image. For your reference, the visual content in the image is represented with caption describing the same image.
@@ -81,19 +75,6 @@ class ChatEvaluation:
     # print results
     pprint(result)
 
-
-# client = AsyncOpenAI(
-#     # This is the default and can be omitted
-#     api_key=os.environ.get("OPENAI_API_KEY"),
-# )
-#
-#
-# async def create_chat_completion(messages):
-#     chat_completion_resp = await client.chat.completions.create(model="gpt-4-1106-preview", messages=messages)
-#     return chat_completion_resp
-#
-#
-
 def main(args):
   # Load input data
   answer_data = []
@@ -141,24 +122,7 @@ def main(args):
     results.extend(async_results)
     print(f"Result Size: {len(results)}")
 
-    #
-    #   if len(batch)>=BATCH_SIZE:
-    #
-    #     messages_batch = list(map(lambda x: LLMEvalPromptGenerator.compare_messages_gen(x), batch))
-    #
-    #     async_results = await asyncio.gather(*(create_chat_completion(m) for m in messages_batch))
-    #     results.extend(async_results)
-    #     print(f"Result Size: {len(results)}")
-    #     batch = []
-    #
-    # async_results = await asyncio.gather(*(create_chat_completion(m) for m in messages_batch))
-    # results.extend(async_results)
 
-    #async_results = call_async(batch, lambda x: LLMEvalPromptGenerator.compare_messages_gen(x))
-    #results.extend(async_results)
-
-    print(f"Result Size: {len(results)}")
-    
   # Print number of questions and results
   print(f'all samples: {len(samples_question_ids)}')
   print(f'ran samples: {len(result_question_ids)}')
@@ -176,7 +140,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--question_input_path', type=str, default='data/eval/llava_med_eval_qa50_qa.jsonl')
-    parser.add_argument('--input_path', type=str, default='data/eval/answer_file_test.jsonl')
+    parser.add_argument('--input_path', type=str, default='data/eval/answer_file1.jsonl')
     parser.add_argument('--output_path', type=str, default='data/eval/llava_med_eval_qa50_qa_ans.jsonl')
     args = parser.parse_args()
     main(args)
