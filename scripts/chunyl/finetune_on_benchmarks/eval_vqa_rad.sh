@@ -94,4 +94,6 @@ python llava/eval/model_vqa_med.py --model-name /home/chunyl/azure_mount/chunyle
     /home/chunyl/azure_mount/hanoverdev/clwon/llava/eval/pvqa/test.json \
     --image-folder /home/chunyl/azure_mount/hanoverdev/clwon/llava/eval/pvqa/images \
     --answers-file \
-    /home/chunyl/azure_mount/chunyleu_output/llava-med/llava-vicuna-7b/med-pretrain-364m-1epoch/finetune_e2e_on_instruct-3epoch/zeroshot_to_downstream_results/pvqa/test-answer-file-run1.jsonl          
+    /home/chunyl/azure_mount/chunyleu_output/llava-med/llava-vicuna-7b/med-pretrain-364m-1epoch/finetune_e2e_on_instruct-3epoch/zeroshot_to_downstream_results/pvqa/test-answer-file-run1.jsonl
+
+

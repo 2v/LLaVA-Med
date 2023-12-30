@@ -13,8 +13,8 @@ warnings.simplefilter('ignore')
 
 def parse_option():
     parser = argparse.ArgumentParser('Evaluation for LLaVA Generated Outputs', add_help=False)
-    parser.add_argument('--gt', type=str, default="data/eval/VQA_RAD/vqa_rad_qa.json", help='path to groundtruth file', )
-    parser.add_argument('--candidate', type=str, default="candidate.json", help='path to candidate answer file', )
+    parser.add_argument('--gt', type=str, default="data/VQA_RAD/vqa_rad_qa.json", help='path to groundtruth file', )
+    parser.add_argument('--candidate', type=str, default="data/VQA_RAD/vqa_rad_qa.json", help='path to candidate answer file', )
     parser.add_argument('--pred', type=str, default="data/eval/answer_file_vqa_rad.jsonl", help='path to prediction file', )
     args, unparsed = parser.parse_known_args()
     return args
@@ -54,7 +54,7 @@ def evaluate(gt, pred, candidate, criterion=None):
 
             
 
-            open_hit_scores['hit'].append(calculate_appearance_with_normalization(pred_value, gt_value, candidate))
+            #open_hit_scores['hit'].append(calculate_appearance_with_normalization(pred_value, gt_value, candidate))
             open_hit_scores['q_id'].append(pred_item['question_id'])
 
             exact_scores['hit'].append(calculate_exactmatch(pred_value, gt_value))
@@ -107,7 +107,7 @@ def evaluate(gt, pred, candidate, criterion=None):
     bleu_score_2 = sum(bleu_scores['bleu_score_2']) / len(bleu_scores['bleu_score_2'])
     bleu_score_3 = sum(bleu_scores['bleu_score_3']) / len(bleu_scores['bleu_score_3'])
 
-    open_hit_score = sum(open_hit_scores['hit']) / len(open_hit_scores['hit'])
+    #open_hit_score = sum(open_hit_scores['hit']) / len(open_hit_scores['hit'])
     closed_score = sum(closed_scores['hit']) / len(closed_scores['hit']) if len(closed_scores['hit']) != 0 else 0.0
 
     num_open, num_close = len(closed_scores['hit']), len(open_hit_scores['hit'])
@@ -123,7 +123,7 @@ def evaluate(gt, pred, candidate, criterion=None):
             ['bleu_score_1', bleu_score_1*100], 
             ['bleu_score_2', bleu_score_2*100], 
             ['bleu_score_3', bleu_score_3*100], 
-            ['open accuracy', open_hit_score*100],
+            #['open accuracy', open_hit_score*100],
             ['yes/no accuracy', closed_score*100]
         ], 
         headers=['Metric', 'Performance']
