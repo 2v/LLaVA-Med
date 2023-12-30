@@ -7,18 +7,26 @@ def modify_json_keys_path_vqa(file_path, output_file_path):
 
     modified_data = []
     for entry in data:
+        new_entry = {}
         # Modify the keys as required
-        entry['question_id'] = entry.pop('qid')
-        entry['image'] = entry.pop('image_name')
-        entry['text'] = entry.pop('question')
+        new_entry['id'] = entry['qid']
+        new_entry['image'] = entry['image_name']
 
-        modified_data.append(entry)
+        new_entry['conversations'] = [
+            {"from": "human", "value": entry['question']},
+            {"from": "gpt", "value": entry['answer']}
+        ]
+
+        modified_data.append(new_entry)
 
     # Write the modified data to a JSON lines file
     with open(output_file_path, 'w') as file:
-        for entry in modified_data:
-            json.dump(entry, file)
-            file.write('\n')
+        json.dump(modified_data, file)
+        file.write('\n')
+
+        # for entry in modified_data:
+        #     json.dump(entry, file)
+        #     file.write('\n')
 
 modify_json_keys_path_vqa('../VQA_RAD/VQA_RAD Dataset Public.json', '../VQA_RAD/vqa_rad_qa.jsonl')
 
