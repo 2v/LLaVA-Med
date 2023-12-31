@@ -15,7 +15,7 @@ def parse_option():
     parser = argparse.ArgumentParser('Evaluation for LLaVA Generated Outputs', add_help=False)
     parser.add_argument('--gt', type=str, default="data/VQA_RAD/vqa_rad_qa.json", help='path to groundtruth file', )
     parser.add_argument('--candidate', type=str, default="data/VQA_RAD/vqa_rad_qa.json", help='path to candidate answer file', )
-    parser.add_argument('--pred', type=str, default="data/eval/answer_file_vqa_rad2.jsonl", help='path to prediction file', )
+    parser.add_argument('--pred', type=str, default="data/eval/answer_file_vqa_rad3_closed.jsonl", help='path to prediction file', )
     args, unparsed = parser.parse_known_args()
     return args
 
