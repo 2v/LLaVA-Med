@@ -3,4 +3,6 @@ data/images/*
 data/pmc_articles/*
 data/VQA_RAD/*
 data/instruct_data/*
+data/benchmark_image_challenge/*
+benchmark_image_challenge.zip
 .env
