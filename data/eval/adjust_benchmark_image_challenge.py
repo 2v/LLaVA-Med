@@ -1,18 +1,15 @@
 import json
 
-from data.benchmark_image_challenge.prompts import prompt_multimodal_fixed, prompt_text_only_fixed, \
-  prompt_image_only_fixed, prompt_multimodal_fixed_min, prompt_text_only_fixed_min, prompt_image_only_fixed_min
+from data.benchmark_image_challenge.prompts import prompt_multimodal_fixed_min, prompt_text_only_fixed_min, \
+  prompt_image_only_fixed_min
+from sklearn.model_selection import train_test_split
 
 
-def modify_json_keys_image_challenge(file_path, output_file_path, prompt_type, minimal=False):
-  if minimal:
-    prompt_mm = prompt_multimodal_fixed_min
-    prompt_text_only = prompt_text_only_fixed_min
-    prompt_image_only = prompt_image_only_fixed_min
-  else:
-    prompt_mm = prompt_multimodal_fixed
-    prompt_text_only = prompt_text_only_fixed
-    prompt_image_only = prompt_image_only_fixed
+def modify_json_keys_image_challenge(file_path, output_file_path_train, prompt_type, train_test=False,
+                                     output_file_path_test=None):
+  prompt_mm = prompt_multimodal_fixed_min
+  prompt_text_only = prompt_text_only_fixed_min
+  prompt_image_only = prompt_image_only_fixed_min
 
   with open(file_path, 'r') as file:
     data = json.load(file)
@@ -44,10 +41,20 @@ def modify_json_keys_image_challenge(file_path, output_file_path, prompt_type, m
 
     modified_data.append(new_entry)
 
-  # Write the modified data to a JSON lines file
-  with open(output_file_path, 'w') as file:
-    json.dump(modified_data, file)
-    file.write('\n')
+  if train_test:
+    train_data, test_data = train_test_split(modified_data, test_size=0.3, random_state=42)
+
+    with open(output_file_path_train, 'w') as file:
+      json.dump(train_data, file)
+      file.write('\n')
+
+    with open(output_file_path_test, 'w') as file:
+      json.dump(test_data, file)
+      file.write('\n')
+  else:
+    with open(output_file_path_train, 'w') as file:
+      json.dump(modified_data, file)
+      file.write('\n')
 
 
 # generate the image challenge benchmark
@@ -63,17 +70,8 @@ modify_json_keys_image_challenge('../benchmark_image_challenge/benchmark_high_re
                                  '../benchmark_image_challenge/benchmark_high_res_text_only.json',
                                  'text_only_fixed')
 
-modify_json_keys_image_challenge('../benchmark_image_challenge/benchmark_high_res.json',
-                                 '../benchmark_image_challenge/benchmark_high_res_multimodal_min.json',
-                                 'mm_fixed',
-                                 minimal=True)
-
-modify_json_keys_image_challenge('../benchmark_image_challenge/benchmark_high_res.json',
-                                 '../benchmark_image_challenge/benchmark_high_res_image_only_min.json',
-                                 'image_only_fixed',
-                                 minimal=True)
-
-modify_json_keys_image_challenge('../benchmark_image_challenge/benchmark_high_res.json',
-                                 '../benchmark_image_challenge/benchmark_high_res_text_only_min.json',
-                                 'text_only_fixed',
-                                 minimal=True)
+modify_json_keys_image_challenge(file_path='../benchmark_image_challenge/benchmark_high_res.json',
+                                 output_file_path_train='../benchmark_image_challenge/benchmark_high_res_multimodal_train.json',
+                                 output_file_path_test='../benchmark_image_challenge/benchmark_high_res_multimodal_test.json',
+                                 prompt_type='text_only_fixed',
+                                 train_test=True)
