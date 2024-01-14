@@ -37,7 +37,7 @@ def modify_json_keys_image_challenge(file_path, output_file_path, prompt_type, m
       print('\'prompt_type\' must be one of: \'mm_fixed\', \'image_only_fixed\', or \'text_only_fixed\'.')
       return
 
-    new_entry['conversations'] = [
+    new_entry['conversatons'] = [
       {"from": "human", "value": formatted_question},
       {"from": "gpt", "value": str(entry['answer'])}
     ]
